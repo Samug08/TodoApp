@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>todoApp</title>
+    <link rel="icon" href="static/image/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+      /* Stile per evitare scroll orizzontale */
+      html, body {
+        overflow-x: hidden;
+        height: 100%;
+        margin: 0;
+      }
+
+      /* Wrapper principale */
+      .main-wrapper {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      /* Area di contenuto principale */
+      .content {
+        flex-grow: 1;
+      }
+
+      /* Footer sticky */
+      footer {
+        background-color: #343a40;
+        color: #ffffff;
+        text-align: center;
+        padding: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">  
+        <div class="container-fluid d-flex justify-content-between align-items-center"> 
+          <div class="d-flex align-items-center"> 
+            <img src="static/image/logo.png" width="35" height="35" class="d-inline-block align-text-top mt-2 mb-2">
+            <h3 class="mb-0 mt-2 mb-2" style="margin-right: 15px; color: #0d6efd;">Ciao {{ username }}!</h3>
+          </div>
+          <div>
+            <a class="btn btn-primary ms-2 mt-2 mb-2" role="button" href="/insert">Aggiungi</a>
+            <a class="btn btn-primary ms-2 mt-2 mb-2" role="button" href="/done">Completati</a>
+          </div> 
+          <div class="d-flex align-items-center"> 
+            <a class="btn btn-primary mt-2 mb-2" role="button" href="/logout">Logout</a> 
+          </div>
+        </div>
+      </nav>
+      <div class="content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              {% if category == 'success'%}
+                <div class="alert alert-success" role="alert">{{ message }}</div>
+              {% elif category == 'error'%}
+                <div class="alert alert-danger" role="alert">{{ message }}</div>
+              {% elif category == 'info'%}
+                <div class="alert alert-info" role="alert">{{ message }}</div>
+              {% endif%}
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        {% if not todos %}
+          <div class="alert alert-info" role="alert">Non ci sono Todo da mostrare</div>
+        {% else %}
+          <div class="container-fluid mt-4 ms-2">
+            <div class="row">
+              {% for todo in todos %}
+              <div class="col-12 col-sm-6 col-md-3 mb-3">
+                <div class="card">
+                  <img src="static/image/logo.png" width="50" height="50">
+                  <div class="card-body">
+                    <h5 class="card-title">- {{ todo.todo }}</h5>
+                    <form action="/{{ todo.id }}/update_status" method="POST">
+                      <input type="checkbox" name="completed" value="1" {% if todo.done %}checked{% endif %} onchange="this.form.submit()">
+                    </form>
+                    <p class="card-text">{{ todo.info }}</p>  
+                    <div class="d-flex"> 
+                      <form action="{{todo.id}}/delete" method="POST"> 
+                        <button type="submit" class="btn btn-danger">Elimina</button> 
+                      </form> 
+                      <form action="{{todo.id}}/modify" method="GET"> 
+                        <button type="submit" class="btn btn-primary mx-2">Modifica</button> 
+                      </form> 
+                      <form action="{{todo.id}}/share" method="GET"> 
+                        <button type="submit" class="btn btn-primary">Condividi</button> 
+                      </form>
+                    </div>
+                    {% if todo.shared %}
+                    <div class="card-footer mt-2">
+                      <small class="text-body-secondary">Condiviso da: {{ todo.shared }}</small>
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      <footer class="bg-dark text-light text-center py-3">
+        <div class="container">
+          <p class="mb-0" style="color: #0d6efd;">© 2024 TodoApp. All rights reserved.</p>
+          <p class="mb-0" style="color: #0d6efd;">Powered by Samu</p>
+        </div>
+      </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>
