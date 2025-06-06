@@ -1,0 +1,21 @@
+# Ambiente virtuale Python
+venv/
+
+# Dipendenze Node.js
+node_modules/
+
+# Config locale di Visual Studio Code
+.vscode/
+
+# File di cache Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# File di database
+database.db
+
+# File di log o temporanei (se presenti in futuro)
+*.log
+*.tmp
+*.swp
