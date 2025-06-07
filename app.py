@@ -4,9 +4,11 @@ import uuid
 from datetime import timedelta
 from functools import wraps  # Aggiunto per il decorator
 
-app = Flask(__name__)
+app = Flask(__name__, 
+            template_folder='frontend/templates',
+            static_folder='frontend/static')
 app.secret_key = b'ciao1234'
-app.permanent_session_lifetime =timedelta(minutes=30)
+app.permanent_session_lifetime = timedelta(minutes=30)
 
 
 
