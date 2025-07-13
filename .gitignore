@@ -19,3 +19,10 @@ database.db
 *.log
 *.tmp
 *.swp
+
+package-lock.json
+package.json
+initDb.py
+deleteDb.sql
+delDb.py
+createDb.sql
