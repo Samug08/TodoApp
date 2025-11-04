@@ -76,7 +76,7 @@
                 <div class="card">
                   <img src="static/image/logo.png" width="50" height="50">
                   <div class="card-body">
-                    <h5 class="card-title">- {{ todo.todo }}</h5>
+                    <h5 class="card-title">{{ todo.todo }}</h5>
                     <form action="/{{ todo.id }}/update_status" method="POST">
                       <input type="checkbox" name="completed" value="1" {% if todo.done %}checked{% endif %} onchange="this.form.submit()">
                     </form>
