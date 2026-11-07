@@ -63,7 +63,20 @@ remove() {
 uploads=()
 deletes=()
 
-if [[ -z "${BEFORE_SHA:-}" || "${BEFORE_SHA}" =~ ^0+$ ]] || ! git cat-file -e "${BEFORE_SHA}^{commit}" 2>/dev/null; then
+# Se sul server manca il codice (web app nuova), il deploy è completo anche dopo un push
+server_empty=0
+if [[ "${DRY_RUN:-0}" == "1" ]]; then
+  [[ "${SIMULATE_EMPTY_SERVER:-0}" == "1" ]] && server_empty=1
+else
+  marker_status=$(api GET "${API}/files/path${PA_PROJECT_DIR}/backend/app.py")
+  case "$marker_status" in
+    200) ;;
+    404) server_empty=1; echo "Sul server non c'è ancora il codice: primo deploy." ;;
+    *) echo "::error::Controllo del server fallito (HTTP ${marker_status}): $(cat /tmp/pa_response 2>/dev/null)"; exit 1 ;;
+  esac
+fi
+
+if (( server_empty )) || [[ -z "${BEFORE_SHA:-}" || "${BEFORE_SHA}" =~ ^0+$ ]] || ! git cat-file -e "${BEFORE_SHA}^{commit}" 2>/dev/null; then
   echo "Deploy completo di: ${DEPLOY_PATHS[*]}"
   while IFS= read -r f; do uploads+=("$f"); done < <(git ls-files -- "${DEPLOY_PATHS[@]}")
 else
