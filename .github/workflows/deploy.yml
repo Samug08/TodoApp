@@ -1,0 +1,35 @@
+name: Deploy su PythonAnywhere
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "frontend/**"
+      - ".github/workflows/deploy.yml"
+      - ".github/scripts/deploy_pythonanywhere.sh"
+  # Avvio manuale dalla scheda Actions: pubblica tutti i file
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-pythonanywhere
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Carica i file e ricarica la web app
+        env:
+          PA_API_TOKEN: ${{ secrets.PA_API_TOKEN }}
+          PA_USERNAME: ${{ vars.PA_USERNAME || 'SamuG00' }}
+          PA_PROJECT_DIR: ${{ vars.PA_PROJECT_DIR }}
+          PA_HOST: ${{ vars.PA_HOST || 'www.pythonanywhere.com' }}
+          PA_DOMAIN: ${{ vars.PA_DOMAIN }}
+          BEFORE_SHA: ${{ github.event_name == 'push' && github.event.before || '' }}
+          AFTER_SHA: ${{ github.sha }}
+        run: bash .github/scripts/deploy_pythonanywhere.sh

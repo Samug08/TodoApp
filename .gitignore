@@ -26,3 +26,5 @@ initDb.py
 deleteDb.sql
 delDb.py
 createDb.sql
+# Configurazione locale di Claude Code
+.claude/
